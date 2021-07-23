@@ -17,6 +17,7 @@ import viper.silicon.state.terms.{Decl, Term}
 
 class VerificationPoolManager(master: MasterVerifier) extends StatefulComponent {
   private val numberOfSlaveVerifiers: Int = Verifier.config.numberOfParallelVerifiers()
+  println(s"numberOfSlaveVerifiers: ${numberOfSlaveVerifiers}")
 
   /*private*/ var slaveVerifiers: Seq[SlaveVerifier] = _
   /*private*/ var slaveVerifierExecutor: ExecutorService = _
