@@ -61,7 +61,15 @@ class VerificationPoolManager(master: MasterVerifier) extends StatefulComponent 
     assert(slaveVerifiers.length == poolConfig.getMaxTotal)
     slaveVerifiers foreach (_.start())
 
-    slaveVerifierExecutor = Executors.newFixedThreadPool(poolConfig.getMaxTotal)
+    slaveVerifierExecutor = Executors.newFixedThreadPool(poolConfig.getMaxTotal, new ThreadFactory {
+      import java.util.concurrent.atomic.AtomicInteger
+      private val mCount = new AtomicInteger(1)
+      override def newThread(runnable: Runnable): Thread = {
+        val threadName = s"SlaveVerifierThread-${mCount.getAndIncrement()}"
+        println(s"creating thread ${threadName}")
+        new Thread(null, runnable, threadName)
+      }
+    })
 //    slaveVerifierExecutor = Executors.newWorkStealingPool(poolConfig.getMaxTotal)
   }
 
