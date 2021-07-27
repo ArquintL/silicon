@@ -29,6 +29,7 @@ class Z3ProverStdIO(uniqueId: String,
        with LazyLogging {
 
   private var outLength: Int = 0
+  private var lastOutLengthReport: Long = System.currentTimeMillis()
   private var pushPopScopeDepth = 0
   private var lastTimeout: Int = -1
   private var logfileWriter: PrintWriter = _
@@ -427,6 +428,10 @@ class Z3ProverStdIO(uniqueId: String,
 
   private def writeLine(out: String) = {
     outLength += out.length
+    if (lastOutLengthReport + 2000 < System.currentTimeMillis()) {
+      lastOutLengthReport = System.currentTimeMillis()
+      println(s"length of strings written so far to Z3: $outLength")
+    }
     logToFile(out)
     output.println(out)
   }
