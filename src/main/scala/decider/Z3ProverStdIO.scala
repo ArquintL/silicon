@@ -28,6 +28,7 @@ class Z3ProverStdIO(uniqueId: String,
     extends Prover
        with LazyLogging {
 
+  private var outLength: Int = 0
   private var pushPopScopeDepth = 0
   private var lastTimeout: Int = -1
   private var logfileWriter: PrintWriter = _
@@ -123,6 +124,8 @@ class Z3ProverStdIO(uniqueId: String,
         z3.destroyForcibly()
         z3.waitFor(10, TimeUnit.SECONDS) /* Makes the current thread wait until the process has been shut down */
       }
+      println(s"strings of total length ${outLength} written to Z3")
+      outLength = 0
 
       if (logfileWriter != null) {
         logfileWriter.close()
@@ -423,6 +426,7 @@ class Z3ProverStdIO(uniqueId: String,
   }
 
   private def writeLine(out: String) = {
+    outLength += out.length
     logToFile(out)
     output.println(out)
   }
